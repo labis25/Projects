@@ -1,0 +1,43 @@
+version: '3'
+services:
+  
+  mongodb:    ##alll container av a name whcih is also a hostname
+    image: mongo   ###Dockerhub, will check if we have it first
+    ports:
+    - 27017:27017   ####u need to change the
+  
+
+    # Run postgres
+  postgresdb:          # name : also the hostname
+    image: postgres    # image downloaded from DockerHub
+    ports:
+    - 5555:5432        # maps port 5432 *inside* the container to port 5555 on my local machine
+                       # because port 5432 is already used on my local machine
+    environment:       # set an environment variable
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=titanic99
+    - POSTGRES_DB=tweetdb
+
+
+   #run tweet_collector
+  tweet_collector:
+    build: tweet_collector/    ####this image is from the one created personally and name of file
+    volumes:
+    - ./tweet_collector/:/app   ##localpath: to the container_path
+    depends_on:
+    - mongodb
+ 
+   #run etl_job
+  etl_job:
+    build: etl_job/    ####this image is from the one created personally and name of file
+    volumes:
+    - ./etl_job/:/app   ##localpath: to the container_path
+    depends_on:
+    - mongodb
+    - postgresdb
+
+
+
+ 
+
+ 
